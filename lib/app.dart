@@ -9,6 +9,7 @@ import 'viewmodels/capacity_view_model.dart';
 import 'views/splash_view.dart';
 import 'views/home_view.dart';
 import 'views/capacity_view.dart';
+import 'views/camera_view.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -37,6 +38,7 @@ class App extends StatelessWidget {
           '/': (_) => const SplashView(),
           '/home': (_) => const HomeView(),
           '/capacity': (_) => const CapacityView(),
+          '/camera': (_) => const CameraView(),
         },
         initialRoute: '/',
       ),
