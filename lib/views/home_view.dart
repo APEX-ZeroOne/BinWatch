@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/theme/app_colors.dart';
 import '../viewmodels/home_view_model.dart';
+import '../viewmodels/capacity_view_model.dart'; // ★ 추가: 평균 계산 위해
 import '../widgets/bin_icon.dart';
 import 'dart:math' as math;
 
@@ -11,6 +12,13 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<HomeViewModel>();
+
+    // ★ CapacityViewModel에서 bins를 읽어 전체 평균(0.0~1.0) 계산
+    final bins = context.watch<CapacityViewModel>().bins;
+    final double avgRatio = bins.isEmpty
+        ? 0.0
+        : (bins.map((b) => b.percent).fold<int>(0, (a, b) => a + b) /
+        (bins.length * 100.0));
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4EFEB),
@@ -31,7 +39,7 @@ class HomeView extends StatelessWidget {
                       children: [
                         _Tile(
                           color: Colors.white,
-                          onTap: () => Navigator.pushNamed(context, '/camera'), // ← 추가
+                          onTap: () => Navigator.pushNamed(context, '/camera'),
                           child: Column(
                             children: [
                               const SizedBox(height: 8),
@@ -50,9 +58,12 @@ class HomeView extends StatelessWidget {
                                 height: 28,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: AppColors.slate.withOpacity(.7), width: 1.6),
+                                  border: Border.all(
+                                      color: AppColors.slate.withOpacity(.7),
+                                      width: 1.6),
                                 ),
-                                child: const Icon(Icons.camera_alt_outlined, size: 16, color: AppColors.slate),
+                                child: const Icon(Icons.camera_alt_outlined,
+                                    size: 16, color: AppColors.slate),
                               ),
                               const SizedBox(height: 10),
                             ],
@@ -67,22 +78,30 @@ class HomeView extends StatelessWidget {
                               const SizedBox(height: 8),
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24),
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           _iconWithLabel(Icons.layers, '완료'),
-                                          _iconWithLabel(Icons.auto_delete_outlined, '완료'),
+                                          _iconWithLabel(
+                                              Icons.auto_delete_outlined, '완료'),
                                         ],
                                       ),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
-                                          _iconWithLabel(Icons.inventory_2_outlined, '완료'),
-                                          _iconWithLabel(Icons.delete_sweep, '미완료', dimmed: true),
+                                          _iconWithLabel(
+                                              Icons.inventory_2_outlined, '완료'),
+                                          _iconWithLabel(Icons.delete_sweep,
+                                              '미완료',
+                                              dimmed: true),
                                         ],
                                       ),
                                     ],
@@ -100,14 +119,17 @@ class HomeView extends StatelessWidget {
                       children: [
                         _Tile(
                           color: const Color(0xFF304057),
-                          onTap: () => Navigator.pushNamed(context, '/capacity'),
+                          onTap: () =>
+                              Navigator.pushNamed(context, '/capacity'),
                           child: Column(
                             children: [
                               const SizedBox(height: 8),
                               Text('쓰레기통 용량', style: _title(Colors.white)),
                               const Spacer(),
+                              // ★ 여기서 avgRatio 사용 (0.0~1.0)
                               CapacityBin(
-                                percent: math.min(1.0, math.max(0.0, vm.overallFill.toDouble())),
+                                percent: math.min(
+                                    1.0, math.max(0.0, avgRatio.toDouble())),
                                 size: 86,
                                 lowColor: const Color(0xFF64C27D),
                                 midColor: const Color(0xFFF2C14E),
@@ -115,7 +137,7 @@ class HomeView extends StatelessWidget {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                '${(vm.overallFill * 100).round()}%',
+                                '${(avgRatio * 100).round()}%', // ★ 텍스트도 평균 기준
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -131,7 +153,7 @@ class HomeView extends StatelessWidget {
                           child: Column(
                             children: [
                               const SizedBox(height: 8),
-                              Text('에러 로그', style: _title(Colors.white)),
+                              Text('분류 로그', style: _title(Colors.white)),
                               const Spacer(),
                               const BinIcon(size: 76, color: Colors.white70),
                               const SizedBox(height: 10),
@@ -141,10 +163,12 @@ class HomeView extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: Colors.white.withOpacity(.2),
-                                  border: Border.all(color: Colors.white70, width: 1.5),
+                                  border: Border.all(
+                                      color: Colors.white70, width: 1.5),
                                 ),
                                 child: const Center(
-                                  child: Icon(Icons.error_outline, color: Colors.white, size: 16),
+                                  child: Icon(Icons.error_outline,
+                                      color: Colors.white, size: 16),
                                 ),
                               ),
                               const Spacer(),
@@ -170,14 +194,17 @@ class HomeView extends StatelessWidget {
     letterSpacing: 1.2,
   );
 
-  static Widget _iconWithLabel(IconData icon, String text, {bool dimmed = false}) {
+  static Widget _iconWithLabel(IconData icon, String text,
+      {bool dimmed = false}) {
     final Color c = dimmed ? AppColors.navy.withOpacity(.55) : AppColors.navy;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: c, size: 28),
         const SizedBox(height: 6),
-        Text(text, style: TextStyle(color: c, fontWeight: FontWeight.w600, fontSize: 12)),
+        Text(text,
+            style: TextStyle(
+                color: c, fontWeight: FontWeight.w600, fontSize: 12)),
       ],
     );
   }
@@ -187,7 +214,7 @@ class HomeView extends StatelessWidget {
 class _Tile extends StatelessWidget {
   final Color color;
   final Widget child;
-  final VoidCallback? onTap; // ← 추가
+  final VoidCallback? onTap;
 
   const _Tile({required this.color, required this.child, this.onTap});
 
@@ -215,9 +242,9 @@ class _Tile extends StatelessWidget {
 class CapacityBin extends StatelessWidget {
   final double percent; // 0.0 ~ 1.0
   final double size;
-  final Color lowColor;   // 0% ~ 50%
-  final Color midColor;   // 50% ~ 80%
-  final Color highColor;  // 80% ~ 100%
+  final Color lowColor; // 0% ~ 50%
+  final Color midColor; // 50% ~ 80%
+  final Color highColor; // 80% ~ 100%
 
   const CapacityBin({
     super.key,

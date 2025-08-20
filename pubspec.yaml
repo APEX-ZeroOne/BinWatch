@@ -21,8 +21,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   provider: ^6.1.2
-  flutter_mjpeg: ^2.0.4   # MJPEG 스트림 표시용
+  flutter_mjpeg: ^2.0.4  # MJPEG 스트림 표시용
   flutter_lints: ^3.0.0
+  http: ^0.13.6
 
 flutter:
   uses-material-design: true
