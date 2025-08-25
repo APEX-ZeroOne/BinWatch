@@ -11,7 +11,8 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<HomeViewModel>();
+    final
+    vm = context.watch<HomeViewModel>();
 
     // ★ CapacityViewModel에서 bins를 읽어 전체 평균(0.0~1.0) 계산
     final bins = context.watch<CapacityViewModel>().bins;
