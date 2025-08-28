@@ -14,12 +14,29 @@ class CapacityView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.cream,
+      appBar: AppBar(
+        backgroundColor: AppColors.cream,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.navy),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          '용량 현황',
+          style: TextStyle(
+            color: AppColors.navy,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 90),
+            const SizedBox(height: 40),
             const BinIcon(size: 120),
-            const SizedBox(height: 90),
+            const SizedBox(height: 40),
 
             // 네이비 영역
             Expanded(
@@ -39,7 +56,7 @@ class CapacityView extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    const SizedBox(height: 90),
+                    const SizedBox(height: 40),
 
                     // 2 x 2 그리드
                     Expanded(
@@ -151,3 +168,4 @@ class _BinCard extends StatelessWidget {
     );
   }
 }
+ 
